@@ -1,0 +1,78 @@
+1. Find all the customers who have an account at all the branches located in a specific city (Ex. Delhi).
+mysql> select distinct S.customername
+    -> from depositer as S
+    -> where not exists ( (select branch_name
+    -> from branch
+    ->
+    -> where branch_city = 'Delhi') except
+    -> (select R.branch_name
+    -> from depositer as T, bankaccount as R
+    -> where T.Accno = R.Accno
+    -> and S.customername = T.customername ));
++--------------+
+| customername |
++--------------+
+| Nikil        |
++--------------+
+
+2. THE ANNUAL INTEREST PAYMENTS ARE MADE AND ALL BRANCHES ARE TO BE INCREASED BY 5%.
+mysql> UPDATE BANKACCOUNT SET BALANCE=BALANCE *1.05;
+Query OK, 10 rows affected (0.01 sec)
+Rows matched: 10  Changed: 10  Warnings: 0
+mysql> SELECT * FROM BANKACCOUNT;
++-------+-------------------+---------+
+| Accno | Branch_name       | Balance |
++-------+-------------------+---------+
+|     1 | SBI_Chamrajpet    |    2100 |
+|     2 | SBI_ResidencyRoad |    5250 |
+|     3 | SBI_ShivajiRoad   |    6300 |
+|     4 | SBI_ParlimentRoad |    9450 |
+|     5 | SBI_Jantarmantar  |    8400 |
+|     6 | SBI_ShivajiRoad   |    4200 |
+|     8 | SBI_ResidencyRoad |    4200 |
+|     9 | SBI_ParlimentRoad |    3150 |
+|    10 | SBI_ResidencyRoad |    5250 |
+|    11 | SBI_Jantarmantar  |    2100 |
++-------+-------------------+---------+
+10 rows in set (0.00 sec)
+
+3. Find the names of all branches that have greater assets than all branches located in Bangalore.
+mysql> select branch_name from branch where assets > all (select assets from branch
+    -> where branch_city = 'Bangalore');
+Empty set (0.00 sec)
+
+4.Demonstrate how you delete all account tuples at every branch located in a specific city (Ex. Bombay).
+mysql> delete from bankaccount
+    -> where branch_name in (
+    -> select branch_name from branch
+    -> where branch_city = 'Bombay');
+Query OK, 2 rows affected (0.00 sec)
+
+mysql> select *from bankaccount;
++-------+-------------------+---------+
+| Accno | Branch_name       | Balance |
++-------+-------------------+---------+
+|     1 | SBI_Chamrajpet    |    2100 |
+|     2 | SBI_ResidencyRoad |    5250 |
+|     4 | SBI_ParlimentRoad |    9450 |
+|     5 | SBI_Jantarmantar  |    8400 |
+|     8 | SBI_ResidencyRoad |    4200 |
+|     9 | SBI_ParlimentRoad |    3150 |
+|    10 | SBI_ResidencyRoad |    5250 |
+|    11 | SBI_Jantarmantar  |    2100 |
++-------+-------------------+---------+
+8 rows in set (0.00 sec)
+
+5. LIST THE ENTIRE LOAN RELATION IN THE DESCENDING ORDER OF AMOUNT.
+
+mysql> SELECT * FROM LOAN ORDER BY AMOUNT DESC;
++-------------+-------------------+--------+
+| Loan_number | Branch_name       | Amount |
++-------------+-------------------+--------+
+|           5 | SBI_Jantarmantar  |   5000 |
+|           4 | SBI_ParlimentRoad |   4000 |
+|           3 | SBI_ShivajiRoad   |   3000 |
+|           2 | SBI_ResidencyRoad |   2000 |
+|           1 | SBI_Chamrajpet    |   1000 |
++-------------+-------------------+--------+
+5 rows in set (0.00 sec)
